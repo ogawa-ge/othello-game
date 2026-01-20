@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オセロゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>オセロゲーム</h1>
+    <div id="game-controls">
+        <form id="game-setup">
+            <label for="game-mode">モード:</label>
+            <select id="game-mode" name="game-mode">
+                <option value="pvp">プレイヤー対戦</option>
+                <option value="pva" selected>AI対戦</option>
+            </select>
+
+            <div id="ai-difficulty-selection">
+                <label for="ai-difficulty">AIの強さ:</label>
+                <select id="ai-difficulty" name="ai-difficulty">
+                    <option value="easy">弱い</option>
+                    <option value="medium" selected>普通</option>
+                    <option value="hard">強い</option>
+                </select>
+            </div>
+            
+            <button type="submit">新しいゲーム</button>
+        </form>
+    </div>
+    <div id="game-info">
+        <p>現在のターン: <span id="current-player">黒</span></p>
+        <p>黒の駒: <span id="black-score">2</span> | 白の駒: <span id="white-score">2</span></p>
+    </div>
+    <div id="board-container"></div>
+    <div id="game-result"></div>
+
+    <script src="js/game-logic.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/ai-logic.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
