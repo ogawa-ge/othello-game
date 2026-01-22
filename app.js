@@ -2,25 +2,92 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOMの読み込みと解析が完了しました");
 
+    const socket = io(); // サーバーに接続
+
     const game = {
         board: null,
         currentPlayer: 1, // 1が黒、-1が白
-        mode: 'pva', // 'pvp' (対人戦) or 'pva' (対AI戦)
+        mode: 'pva', // 'pvp', 'pva', 'online'
         aiDifficulty: 'medium',
+        myColor: 0, // オンライン対戦時の自分の色(1:黒, -1:白)
+        roomId: null, // オンライン対戦のルームID
         isGameOver: false,
     };
 
+    // --- Socket.IO イベントハンドラ ---
+
+    socket.on('message', (data) => {
+        document.getElementById('game-result').textContent = data.text;
+        console.log(`Message from server: ${data.text}`);
+    });
+
+    socket.on('game_start', (data) => {
+        console.log('Game start!', data);
+        game.myColor = data.color;
+        game.roomId = data.roomId;
+        game.mode = 'online';
+
+        document.getElementById('game-setup').style.display = 'none';
+        document.getElementById('game-info').style.display = 'block';
+
+        game.board = GameLogic.createBoard();
+        GameLogic.initBoard(game.board);
+        game.currentPlayer = 1;
+        game.isGameOver = false;
+
+        const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
+        UI.renderBoard(game.board, validMoves);
+        UI.updateScore(game.board);
+        UI.updateCurrentPlayer(game.currentPlayer);
+        
+        const yourColor = game.myColor === 1 ? '黒' : '白';
+        document.getElementById('game-result').textContent = `対戦開始！あなたは ${yourColor} です。`;
+    });
+
+    socket.on('update_game', (data) => {
+        game.board = data.board;
+        game.currentPlayer = data.currentPlayer;
+        
+        const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
+        UI.renderBoard(game.board, validMoves);
+        UI.updateScore(game.board);
+        UI.updateCurrentPlayer(game.currentPlayer);
+    });
+
+    socket.on('game_over', (data) => {
+        game.isGameOver = true;
+        UI.displayWinner(data.winner);
+        console.log("Game Over.");
+    });
+
+    socket.on('opponent_disconnected', (data) => {
+        game.isGameOver = true;
+        document.getElementById('game-result').textContent = data.message;
+    });
+
+
     function handlePlayerMove(row, col) {
-        if (game.isGameOver || (game.mode === 'pva' && game.currentPlayer === -1)) {
-            return; // プレイヤーのターンではない、またはゲームが終了している
+        if (game.isGameOver) return;
+
+        if (game.mode === 'online' && game.myColor !== game.currentPlayer) {
+            console.log("相手のターンです。");
+            return;
+        }
+        
+        if (game.mode === 'pva' && game.currentPlayer === -1) {
+            return;
         }
 
         const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
         const isValid = validMoves.some(move => move[0] === row && move[1] === col);
 
         if (isValid) {
-            GameLogic.placeAndFlip(game.board, row, col, game.currentPlayer);
-            handleTurn();
+            if (game.mode === 'online') {
+                socket.emit('place_stone', { row, col, roomId: game.roomId });
+            } else {
+                GameLogic.placeAndFlip(game.board, row, col, game.currentPlayer);
+                handleTurn();
+            }
         } else {
             console.log("無効な手です。");
         }
@@ -29,25 +96,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleTurn() {
         if (checkGameOver()) return;
         
-        // プレイヤーを交代
         game.currentPlayer *= -1;
         UI.updateCurrentPlayer(game.currentPlayer);
 
         let validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
-        UI.renderBoard(game.board, validMoves); // 有効な手をUI.renderBoardに渡す
+        UI.renderBoard(game.board, validMoves);
+        UI.updateScore(game.board);
 
         if (validMoves.length === 0) {
             console.log(`${game.currentPlayer === 1 ? '黒' : '白'}には有効な手がありません。パスします。`);
-            // ターンを戻す
             game.currentPlayer *= -1;
             UI.updateCurrentPlayer(game.currentPlayer);
             
             if (checkGameOver()) return;
         }
 
-        // AIのターンの場合
         if (game.mode === 'pva' && game.currentPlayer === -1) {
-            // クリックを無効にし、少し遅れてAIの手をトリガーする
             setTimeout(triggerAIMove, 500);
         }
     }
@@ -63,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("AIには打つ手がありません。");
         }
         
-        // AIが手を打った後、次のプレイヤーの有効な手で再描画する
         handleTurn();
     }
 
@@ -79,12 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initGame(event) {
-        if(event) event.preventDefault(); // フォームの送信を抑制
+        if(event) event.preventDefault();
 
         game.mode = document.getElementById('game-mode').value;
+        if (game.mode === 'online') return;
+
         game.aiDifficulty = document.getElementById('ai-difficulty').value;
         
         document.getElementById('ai-difficulty-selection').style.display = game.mode === 'pva' ? 'block' : 'none';
+        document.getElementById('game-info').style.display = 'block';
 
         game.board = GameLogic.createBoard();
         GameLogic.initBoard(game.board);
@@ -92,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         game.isGameOver = false;
 
         const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
-        UI.renderBoard(game.board, validMoves); // 初回描画時に有効な手を渡す
+        UI.renderBoard(game.board, validMoves);
         UI.updateScore(game.board);
         UI.updateCurrentPlayer(game.currentPlayer);
         document.getElementById('game-result').textContent = '';
@@ -100,11 +166,16 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`新しいゲームを開始しました。モード: ${game.mode}, 難易度: ${game.aiDifficulty}`);
     }
 
-    // --- イベントリスナー ---
     document.getElementById('game-setup').addEventListener('submit', initGame);
     document.getElementById('game-mode').addEventListener('change', () => {
-        const isPVA = document.getElementById('game-mode').value === 'pva';
-        document.getElementById('ai-difficulty-selection').style.display = isPVA ? 'block' : 'none';
+        const mode = document.getElementById('game-mode').value;
+        if(mode === 'online') {
+            document.getElementById('game-setup').style.display = 'none';
+            socket.emit('find_game'); // find_gameイベントは未実装だが、将来的にはこうなる
+            document.getElementById('game-result').textContent = 'オンライン対戦を探しています...';
+        } else {
+            document.getElementById('ai-difficulty-selection').style.display = mode === 'pva' ? 'block' : 'none';
+        }
     });
     document.getElementById('board-container').addEventListener('click', (event) => {
         const cell = event.target.closest('.cell');
@@ -114,9 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
             handlePlayerMove(row, col);
         }
     });
-
-    // --- ゲームの初期化 ---
-    initGame();
+    
+    document.getElementById('game-info').style.display = 'none';
 });
 
 console.log("app.jsが読み込まれました");
