@@ -1,164 +1,164 @@
 ---
-description: "Task list for Othello Game implementation"
+description: "オセロゲーム実装のタスクリスト"
 ---
 
-# Tasks: Othello Game
+# タスク: オセロゲーム
 
-**Input**: Design documents from `/specs/001-othello-game/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md
+**入力**: `/specs/001-othello-game/` にある設計ドキュメント
+**前提条件**: plan.md (必須), spec.md (ユーザーストーリーに必須), research.md, data-model.md
 
-**Tests**: Included as requested in research.md (QUnit).
+**テスト**: research.md の要求通り、テストを含む (QUnit).
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**構成**: 各タスクはユーザーストーリーごとにグループ化されており、各ストーリーの独立した実装とテストを可能にする。
 
-## Format: `[ID] [P?] [Story] Description`
+## フォーマット: `[ID] [P?] [ストーリー] 説明`
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
-- Include exact file paths in descriptions
+- **[P]**: 並行して実行可能 (異なるファイル、依存関係なし)
+- **[ストーリー]**: このタスクが属するユーザーストーリー (例: US1, US2, US3)
+- 説明には正確なファイルパスを含めること
 
-## Path Conventions
+## パス規約
 
-- Paths follow the single project structure defined in `plan.md`.
-
----
-
-## Phase 1: Setup (Shared Infrastructure)
-
-**Purpose**: Project initialization and test environment setup.
-
-- [x] T001 [P] Create the initial file structure: `index.html`, `style.css`, `app.js`, and the `js/` and `tests/` directories.
-- [x] T002 [P] Set up the QUnit testing environment by creating `tests/index.html` to load QUnit and the test files.
-- [x] T003 [P] Create initial test files: `tests/test-setup.js`, `tests/test-game-logic.js`, and `tests/test-ai-logic.js`.
+- パスは `plan.md` で定義されたシングルプロジェクト構造に従う。
 
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## フェーズ1: セットアップ (共通基盤)
 
-**Purpose**: Core data structures and basic UI that MUST be complete before ANY user story can be implemented.
+**目的**: プロジェクトの初期化とテスト環境のセットアップ。
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
-
-- [x] T004 Create the basic HTML layout for the game board and controls in `index.html`.
-- [x] T005 [P] Add initial CSS in `style.css` to style the game board grid and pieces.
-- [x] T006 Implement the `Board` data model (8x8 array) and its initial state in `js/game-logic.js` as per `data-model.md`.
-- [x] T007 Implement the initial `Game` class/object structure in `js/game-logic.js`, including `board`, `currentPlayer`, and `gameState` properties.
-- [x] T008 [P] Write a QUnit test in `tests/test-game-logic.js` to verify the initial board setup is correct.
-
-**Checkpoint**: Foundation ready - user story implementation can now begin.
+- [x] T001 [P] 初期ファイル構造を作成: `index.html`, `style.css`, `app.js`, および `js/` と `tests/` ディレクトリ。
+- [x] T002 [P] `tests/index.html` を作成し、QUnitとテストファイルを読み込むことでQUnitテスト環境をセットアップ。
+- [x] T003 [P] 初期のテストファイルを作成: `tests/test-setup.js`, `tests/test-game-logic.js`, `tests/test-ai-logic.js`。
 
 ---
 
-## Phase 3: User Story 1 - 2-Player Versus Mode (Priority: P1) 🎯 MVP
+## フェーズ2: 基礎 (ブロッキング前提条件)
 
-**Goal**: Two players can play a full game of Othello, with the system enforcing rules and declaring a winner.
+**目的**: ユーザーストーリーを実装する前に**必ず**完了している必要がある、コアとなるデータ構造と基本UI。
 
-**Independent Test**: Two testers can open `index.html`, play a complete game against each other, and see the correct winner announced.
+**⚠️重要**: このフェーズが完了するまで、ユーザーストーリーの作業は開始できない。
 
-### Tests for User Story 1 (QUnit) ⚠️
+- [x] T004 `index.html` にゲーム盤とコントロールの基本HTMLレイアウトを作成。
+- [x] T005 [P] `style.css` にゲーム盤のグリッドと駒をスタイリングするための初期CSSを追加。
+- [x] T006 `data-model.md` に従って、`js/game-logic.js` に `Board` データモデル (8x8配列) とその初期状態を実装。
+- [x] T007 `js/game-logic.js` に `Game` クラス/オブジェクトの初期構造を実装（`board`, `currentPlayer`, `gameState` プロパティを含む）。
+- [x] T008 [P] `tests/test-game-logic.js` に、初期盤面のセットアップが正しいことを検証するQUnitテストを記述。
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
-
-- [x] T009 [P] [US1] Write a test in `tests/test-game-logic.js` to check the valid move calculation for a given player and board state.
-- [x] T010 [P] [US1] Write a test in `tests/test-game-logic.js` to verify that placing a piece correctly flips the opponent's pieces.
-- [x] T011 [P] [US1] Write a test in `tests/test-game-logic.js` to confirm that the turn correctly passes to the next player.
-- [x] T012 [P] [US1] Write a test in `tests/test-game-logic.js` for the game-ending condition (no valid moves for either player).
-- [x] T013 [P] [US1] Write a test in `tests/test-game-logic.js` to verify the win/loss/draw determination logic.
-
-### Implementation for User Story 1
-
-- [x] T014 [US1] Implement the valid move calculation logic within `js/game-logic.js`.
-- [x] T015 [US1] Implement the piece-flipping logic in `js/game-logic.js` after a move is made.
-- [x] T016 [US1] Implement the turn-switching and pass logic in `js/game-logic.js`.
-- [x] T017 [US1] Implement the game end detection and winner calculation in `js/game-logic.js`.
-- [x] T018 [US1] Implement UI rendering in `js/ui.js` to draw the board and pieces based on the `Game` state.
-- [x] T019 [US1] In `app.js`, add event listeners to the board to handle player clicks and trigger the game logic.
-
-**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently.
+**チェックポイント**: 基礎準備完了 - これでユーザーストーリーの実装を開始できる。
 
 ---
 
-## Phase 4: User Story 2 - Player vs. AI Mode (Priority: P1)
+## フェーズ3: ユーザーストーリー1 - 2プレイヤー対戦モード (優先度: P1) 🎯 MVP
 
-**Goal**: A single player can play a full game of Othello against a computer opponent with selectable difficulty.
+**目標**: 2人のプレイヤーがオセロのフルゲームをプレイでき、システムがルールを強制し、勝者を宣言する。
 
-**Independent Test**: A tester can start a game against the AI at each difficulty level, play to completion, and see a valid outcome.
+**独立したテスト**: 2人のテスターが `index.html` を開き、互いに対戦してゲームを完了し、正しい勝者が表示されることを確認できる。
 
-### Tests for User Story 2 (QUnit) ⚠️
+### ユーザーストーリー1のテスト (QUnit) ⚠️
 
-- [x] T020 [P] [US2] Write tests in `tests/test-ai-logic.js` for the "easy" AI to ensure it always returns a valid, random move.
-- [x] T021 [P] [US2] Write tests in `tests/test-ai-logic.js` for the "medium" and "hard" AI, providing a board state and ensuring it returns the expected best move based on its evaluation function.
+> **注意: これらのテストを最初に書き、実装前に失敗することを確認する**
 
-### Implementation for User Story 2
+- [x] T009 [P] [US1] `tests/test-game-logic.js` に、特定のプレイヤーと盤面状態に対する有効な手の計算をチェックするテストを記述。
+- [x] T010 [P] [US1] `tests/test-game-logic.js` に、駒を置くと相手の駒が正しく反転することを検証するテストを記述。
+- [x] T011 [P] [US1] `tests/test-game-logic.js` に、ターンが次のプレイヤーに正しく渡されることを確認するテストを記述。
+- [x] T012 [P] [US1] `tests/test-game-logic.js` に、ゲーム終了条件（どちらのプレイヤーにも有効な手がない）のテストを記述。
+- [x] T013 [P] [US1] `tests/test-game-logic.js` に、勝敗/引き分け判定ロジックを検証するテストを記述。
 
-- [x] T022 [P] [US2] Add UI elements to `index.html` for selecting game mode (2P vs AI) and AI difficulty.
-- [x] T023 [P] [US2] Implement the `AIPlayer` entity and the "easy" (random) move logic in `js/ai-logic.js`.
-- [x] T024 [US2] Implement the "medium" AI (minimax depth 3) in `js/ai-logic.js`.
-- [x] T025 [US2] Implement the "hard" AI (minimax with alpha-beta pruning) in `js/ai-logic.js`.
-- [x] T026 [US2] Update `app.js` to handle game mode selection and initialize an AI opponent when chosen.
-- [x] T027 [US2] Modify the game loop in `js/game-logic.js` to call the AI's makeMove function when it's the AI's turn.
+### ユーザーストーリー1の実装
 
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work.
+- [x] T014 [US1] `js/game-logic.js` 内に有効な手の計算ロジックを実装。
+- [x] T015 [US1] 手が打たれた後に `js/game-logic.js` に駒の反転ロジックを実装。
+- [x] T016 [US1] `js/game-logic.js` にターンの切り替えとパスのロジックを実装。
+- [x] T017 [US1] `js/game-logic.js` にゲーム終了の検出と勝者計算を実装。
+- [x] T018 [US1] `js/ui.js` に `Game` の状態に基づいて盤と駒を描画するUIレンダリングを実装。
+- [x] T019 [US1] `app.js` に、プレイヤーのクリックを処理し、ゲームロジックをトリガーするためのイベントリスナーを盤に追加。
 
----
-
-## Phase 5: User Story 3 - Rule Violation Prevention (Priority: P2)
-
-**Goal**: The system prevents players from making illegal moves and guides them by showing valid move locations.
-
-**Independent Test**: A tester attempts to click on various invalid squares (occupied, does not flip pieces) and confirms no piece is placed. The tester also confirms that highlighted valid moves are accurate.
-
-### Tests for User Story 3 (QUnit) ⚠️
-
-- [x] T028 [P] [US3] Write tests in `tests/test-game-logic.js` to ensure the Game.playMove function rejects moves not in the pre-calculated valid moves list.
-
-### Implementation for User Story 3
-
-- [x] T029 [US3] Implement logic in `js/ui.js` to visually highlight all valid moves for the current player on the board.
-- [x] T030 [US3] Update the event handling in `app.js` to only proceed with a move if the clicked square is one of the valid moves.
-
-**Checkpoint**: All user stories should now be independently functional.
+**チェックポイント**: この時点で、ユーザーストーリー1は完全に機能し、独立してテスト可能であるべき。
 
 ---
 
-## Phase 6: Polish & Cross-Cutting Concerns
+## フェーズ4: ユーザーストーリー2 - プレイヤー vs. AI モード (優先度: P1)
 
-**Purpose**: Improvements that affect the overall experience.
+**目標**: 1人のプレイヤーが、選択可能な難易度を持つコンピュータ対戦相手とオセロのフルゲームをプレイできる。
 
-- [x] T031 [P] Add clear UI messaging for game state (e.g., current turn, winner announcement) in `js/ui.js`.
-- [x] T032 [P] Add a "New Game" button to `index.html` and implement the reset logic in `app.js`.
-- [ ] T033 Code cleanup and refactoring across all `.js` files to improve clarity and maintainability.
-- [ ] T034 [P] Review and enhance styling in `style.css` for a more polished look and feel.
+**独立したテスト**: テスターが各難易度でAIとのゲームを開始し、最後までプレイして有効な結果が表示されることを確認できる。
 
----
+### ユーザーストーリー2のテスト (QUnit) ⚠️
 
-## Dependencies & Execution Order
+- [x] T020 [P] [US2] `tests/test-ai-logic.js` に、「弱い」AIが常に有効でランダムな手を返すことを保証するテストを記述。
+- [x] T021 [P] [US2] `tests/test-ai-logic.js` に、「普通」と「強い」AIに対して、盤面状態を与え、評価関数に基づいて期待される最善の手を返すことを保証するテストを記述。
 
-### Phase Dependencies
-- **Setup (Phase 1)** -> **Foundational (Phase 2)** -> **User Stories (Phases 3, 4, 5)** -> **Polish (Phase 6)**
+### ユーザーストーリー2の実装
 
-### User Story Dependencies
-- **US1, US2, US3**: All depend on the Foundational phase being complete.
-- **US2 (AI vs Player)** builds upon the core logic from **US1 (2-Player)**. It's recommended to complete US1 first.
-- **US3 (Rule Prevention)** enhances the experience of both US1 and US2.
+- [x] T022 [P] [US2] `index.html` にゲームモード（2P vs AI）とAIの難易度を選択するためのUI要素を追加。
+- [x] T023 [P] [US2] `js/ai-logic.js` に `AIPlayer` エンティティと「弱い」（ランダム）AIの手のロジックを実装。
+- [x] T024 [US2] `js/ai-logic.js` に「普通」のAI（ミニマックス深さ3）を実装。
+- [x] T025 [US2] `js/ai-logic.js` に「強い」AI（αβ法を用いたミニマックス）を実装。
+- [x] T026 [US2] ゲームモードの選択を処理し、選択された場合にAI対戦相手を初期化するように `app.js` を更新。
+- [x] T027 [US2] AIのターンのときにAIのmakeMove関数を呼び出すように `js/game-logic.js` のゲームループを修正。
 
-### Parallel Opportunities
-- Once the Foundational phase is done, work on US1, US2, and US3 can be parallelized, though there are dependencies in the game logic.
-- **Recommended order**: US1 -> US3 -> US2, as the core rules and UI helpers should be stable before adding AI complexity.
-- Tasks marked [P] can generally be worked on concurrently.
+**チェックポイント**: この時点で、ユーザーストーリー1と2の両方が動作するべき。
 
 ---
 
-## Implementation Strategy
+## フェーズ5: ユーザーストーリー3 - ルール違反の防止 (優先度: P2)
 
-### MVP First (User Story 1 Only)
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: A complete 2-player game is playable. This is the core product.
+**目標**: システムがプレイヤーが不正な手を打つのを防ぎ、有効な手の位置を示すことでプレイヤーをガイドする。
 
-### Incremental Delivery
-1. Deliver MVP (US1).
-2. Add US3 (Rule Prevention) to improve the core experience.
-3. Add US2 (AI Opponent) as a major feature enhancement.
-4. Finish with Phase 6 (Polish).
+**独立したテスト**: テスターが無効なマス（占有されている、駒を反転できない）を様々クリックし、駒が置かれないことを確認する。また、ハイライトされた有効な手が正確であることを確認する。
+
+### ユーザーストーリー3のテスト (QUnit) ⚠️
+
+- [x] T028 [P] [US3] `tests/test-game-logic.js` に、`Game.playMove` 関数が事前に計算された有効な手のリストにない手を拒否することを保証するテストを記述。
+
+### ユーザーストーリー3の実装
+
+- [x] T029 [US3] `js/ui.js` に、現在のプレイヤーのすべての有効な手を盤上で視覚的にハイライトするロジックを実装。
+- [x] T030 [US3] クリックされたマスが有効な手の1つである場合にのみ手を進めるように `app.js` のイベント処理を更新。
+
+**チェックポイント**: すべてのユーザーストーリーが独立して機能するべき。
+
+---
+
+## フェーズ6: 仕上げ & 横断的関心事
+
+**目的**: 全体的な体験に影響を与える改善。
+
+- [x] T031 [P] `js/ui.js` にゲーム状態に関する明確なUIメッセージ（例：現在のターン、勝者の告知）を追加。
+- [x] T032 [P] `index.html` に「新しいゲーム」ボタンを追加し、`app.js` にリセットロジックを実装。
+- [ ] T033 全ての `.js` ファイルにわたって、明確さと保守性を向上させるためのコードクリーンアップとリファクタリング。
+- [ ] T034 [P] より洗練されたルックアンドフィールのために `style.css` のスタイリングを見直し、強化。
+
+---
+
+## 依存関係と実行順序
+
+### フェーズの依存関係
+- **セットアップ (フェーズ1)** -> **基礎 (フェーズ2)** -> **ユーザーストーリー (フェーズ3, 4, 5)** -> **仕上げ (フェーズ6)**
+
+### ユーザーストーリーの依存関係
+- **US1, US2, US3**: 全て基礎フェーズの完了に依存。
+- **US2 (AI vs プレイヤー)** は **US1 (2プレイヤー)** のコアロジックの上に構築される。US1を先に完了することが推奨される。
+- **US3 (ルール防止)** はUS1とUS2の両方の体験を向上させる。
+
+### 並行作業の機会
+- 基礎フェーズが完了すれば、US1, US2, US3の作業は並行可能だが、ゲームロジックには依存関係がある。
+- **推奨順序**: US1 -> US3 -> US2。AIの複雑さを追加する前に、コアルールとUIヘルパーが安定しているべき。
+- [P]マークのタスクは、一般的に同時に作業可能。
+
+---
+
+## 実装戦略
+
+### MVPファースト (ユーザーストーリー1のみ)
+1. フェーズ1: セットアップを完了
+2. フェーズ2: 基礎を完了
+3. フェーズ3: ユーザーストーリー1を完了
+4. **停止して検証**: 完全な2プレイヤーゲームがプレイ可能であること。これがコア製品。
+
+### インクリメンタルな提供
+1. MVP (US1) を提供。
+2. コア体験を向上させるために US3 (ルール防止) を追加。
+3. 主要な機能強化として US2 (AI対戦相手) を追加。
+4. フェーズ6 (仕上げ) で完了。

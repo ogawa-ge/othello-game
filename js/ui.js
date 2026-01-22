@@ -1,7 +1,7 @@
 const UI = {
-    renderBoard: (board, validMoves = []) => { // Added validMoves parameter
+    renderBoard: (board, validMoves = []) => { // 有効な手を表示するための引数を追加
         const boardContainer = document.getElementById('board-container');
-        boardContainer.innerHTML = ''; // Clear the board before rendering
+        boardContainer.innerHTML = ''; // レンダリング前にボードをクリア
 
         for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
@@ -10,7 +10,7 @@ const UI = {
                 cell.dataset.row = r;
                 cell.dataset.col = c;
 
-                // Check if this cell is a valid move
+                // このセルが有効な手かどうかをチェック
                 const isValidMoveCell = validMoves.some(move => move[0] === r && move[1] === c);
                 if (isValidMoveCell) {
                     cell.classList.add('valid-move');
@@ -55,4 +55,4 @@ const UI = {
     }
 };
 
-console.log("ui.js loaded");
+console.log("ui.js が読み込まれました");

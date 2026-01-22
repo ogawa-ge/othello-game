@@ -1,4 +1,5 @@
 const AILogic = {
+    // AIの手を決定するメイン関数
     makeMove: (board, player, difficulty) => {
         const validMoves = GameLogic.getValidMoves(board, player);
         if (validMoves.length === 0) return null;
@@ -7,18 +8,20 @@ const AILogic = {
             case 'easy':
                 return AILogic._easyMove(validMoves);
             case 'medium':
-                return AILogic._minimaxMove(board, player, 3, false);
+                return AILogic._minimaxMove(board, player, 3, false); // 探索の深さ: 3
             case 'hard':
-                return AILogic._minimaxMove(board, player, 5, true);
+                return AILogic._minimaxMove(board, player, 5, true);  // 探索の深さ: 5, αβ法使用
             default:
                 return AILogic._easyMove(validMoves);
         }
     },
 
+    // '弱い'モード：有効な手からランダムに選択
     _easyMove: (validMoves) => {
         return validMoves[Math.floor(Math.random() * validMoves.length)];
     },
     
+    // ミニマックス法を使用して最善の手を見つける
     _minimaxMove: (board, player, depth, useAlphaBeta) => {
         let bestMove = null;
         let bestValue = -Infinity;
@@ -49,6 +52,7 @@ const AILogic = {
         return bestMove;
     },
 
+    // ミニマックス法の再帰関数
     _minimax: (board, depth, currentPlayer, maximizingPlayer) => {
         if (depth === 0 || GameLogic.isGameOver(board)) {
             return AILogic._evaluateBoard(board, maximizingPlayer);
@@ -75,6 +79,7 @@ const AILogic = {
         return bestValue;
     },
 
+    // アルファベータ法を使用したミニマックス法の再帰関数
     _minimaxAlphaBeta: (board, depth, alpha, beta, currentPlayer, maximizingPlayer) => {
         if (depth === 0 || GameLogic.isGameOver(board)) {
             return AILogic._evaluateBoard(board, maximizingPlayer);
@@ -95,17 +100,19 @@ const AILogic = {
             if (currentPlayer === maximizingPlayer) {
                 bestValue = Math.max(bestValue, value);
                 alpha = Math.max(alpha, bestValue);
-                if (beta <= alpha) break; // Beta cutoff
+                if (beta <= alpha) break; // ベータカット
             } else {
                 bestValue = Math.min(bestValue, value);
                 beta = Math.min(beta, bestValue);
-                if (beta <= alpha) break; // Alpha cutoff
+                if (beta <= alpha) break; // アルファカット
             }
         }
         return bestValue;
     },
 
+    // 盤面を評価する関数
     _evaluateBoard: (board, player) => {
+        // 重み付けテーブル（隅は高評価、その隣は低評価など）
         const weights = [
             [120, -20, 20,  5,  5, 20, -20, 120],
             [-20, -40, -5, -5, -5, -5, -40, -20],
@@ -129,8 +136,9 @@ const AILogic = {
                 }
             }
         }
+        // プレイヤーのスコアと相手のスコアの差を返す
         return playerScore - opponentScore;
     }
 };
 
-console.log("ai-logic.js loaded");
+console.log("ai-logic.js が読み込まれました");

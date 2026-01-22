@@ -76,4 +76,4 @@ const GameLogic = {
     }
 };
 
-console.log("game-logic.js loaded");
+console.log("game-logic.js が読み込まれました");

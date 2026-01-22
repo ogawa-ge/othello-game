@@ -1,5 +1,5 @@
-// AIロジックのテストをここに記述します
-QUnit.module('AI Logic', function(hooks) {
+// AIロジックのテスト
+QUnit.module('AIロジック', function(hooks) {
     let board;
 
     hooks.beforeEach(function() {
@@ -7,42 +7,42 @@ QUnit.module('AI Logic', function(hooks) {
         GameLogic.initBoard(board);
     });
 
-    QUnit.test('T020 - Easy AI returns a valid move', function(assert) {
-        const player = 1; // Black
+    QUnit.test('T020 - 弱いAIは有効な手を返す', function(assert) {
+        const player = 1; // 黒
         const validMoves = GameLogic.getValidMoves(board, player);
         const aiMove = AILogic.makeMove(board, player, 'easy');
 
-        assert.ok(aiMove, 'Easy AI should return a move');
+        assert.ok(aiMove, '弱いAIは手を返す必要があります');
         
         const isMoveValid = validMoves.some(move => move[0] === aiMove[0] && move[1] === aiMove[1]);
-        assert.ok(isMoveValid, 'Easy AI should return a move from the valid moves list');
+        assert.ok(isMoveValid, '弱いAIは有効な手のリストから手を返す必要があります');
     });
 
-    QUnit.test('T021 - Medium AI makes a predictable smart move', function(assert) {
-        const player = 1; // Black
-        // Setup a board where a corner is available
-        board[0][0] = 0; // Make corner available
+    QUnit.test('T021 - 普通のAIは予測可能な賢い手を打つ', function(assert) {
+        const player = 1; // 黒
+        // 角が利用可能な盤面を設定
+        board[0][0] = 0; // 角を有効にする
         board[1][1] = 1;
         board[0][1] = -1;
 
         const validMoves = GameLogic.getValidMoves(board, player);
-        // Ensure the corner is actually a valid move
+        // 角が実際に有効な手であることを確認
         const isCornerValid = validMoves.some(move => move[0] === 0 && move[1] === 0);
-        assert.ok(isCornerValid, 'The corner [0,0] should be a valid move for the test setup');
+        assert.ok(isCornerValid, 'テスト設定では角[0,0]が有効な手である必要があります');
 
         const aiMove = AILogic.makeMove(board, player, 'medium');
 
-        assert.deepEqual(aiMove, [0, 0], 'Medium AI should choose the corner');
+        assert.deepEqual(aiMove, [0, 0], '普通のAIは角を選択する必要があります');
     });
 
-    QUnit.test('T021 - Hard AI returns a valid move', function(assert) {
-        const player = -1; // White
+    QUnit.test('T021 - 強いAIは有効な手を返す', function(assert) {
+        const player = -1; // 白
         const validMoves = GameLogic.getValidMoves(board, player);
         const aiMove = AILogic.makeMove(board, player, 'hard');
 
-        assert.ok(aiMove, 'Hard AI should return a move');
+        assert.ok(aiMove, '強いAIは手を返す必要があります');
         
         const isMoveValid = validMoves.some(move => move[0] === aiMove[0] && move[1] === aiMove[1]);
-        assert.ok(isMoveValid, 'Hard AI should return a move from the valid moves list');
+        assert.ok(isMoveValid, '強いAIは有効な手のリストから手を返す必要があります');
     });
 });

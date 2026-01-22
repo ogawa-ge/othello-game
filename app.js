@@ -1,18 +1,18 @@
 // アプリケーションのメインロジックをここに記述します
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed");
+    console.log("DOMの読み込みと解析が完了しました");
 
     const game = {
         board: null,
-        currentPlayer: 1, // 1 for Black, -1 for White
-        mode: 'pva', // 'pvp' or 'pva'
+        currentPlayer: 1, // 1が黒、-1が白
+        mode: 'pva', // 'pvp' (対人戦) or 'pva' (対AI戦)
         aiDifficulty: 'medium',
         isGameOver: false,
     };
 
     function handlePlayerMove(row, col) {
         if (game.isGameOver || (game.mode === 'pva' && game.currentPlayer === -1)) {
-            return; // Not player's turn or game is over
+            return; // プレイヤーのターンではない、またはゲームが終了している
         }
 
         const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
@@ -22,48 +22,48 @@ document.addEventListener('DOMContentLoaded', () => {
             GameLogic.placeAndFlip(game.board, row, col, game.currentPlayer);
             handleTurn();
         } else {
-            console.log("Invalid move.");
+            console.log("無効な手です。");
         }
     }
 
     function handleTurn() {
         if (checkGameOver()) return;
         
-        // Switch player
+        // プレイヤーを交代
         game.currentPlayer *= -1;
         UI.updateCurrentPlayer(game.currentPlayer);
 
         let validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
-        UI.renderBoard(game.board, validMoves); // Pass valid moves to UI.renderBoard
+        UI.renderBoard(game.board, validMoves); // 有効な手をUI.renderBoardに渡す
 
         if (validMoves.length === 0) {
-            console.log(`${game.currentPlayer === 1 ? '黒' : '白'} has no valid moves. Passing turn.`);
-            // Pass the turn back
+            console.log(`${game.currentPlayer === 1 ? '黒' : '白'}には有効な手がありません。パスします。`);
+            // ターンを戻す
             game.currentPlayer *= -1;
             UI.updateCurrentPlayer(game.currentPlayer);
             
             if (checkGameOver()) return;
         }
 
-        // If it's AI's turn
+        // AIのターンの場合
         if (game.mode === 'pva' && game.currentPlayer === -1) {
-            // Disable clicks and trigger AI move after a short delay
+            // クリックを無効にし、少し遅れてAIの手をトリガーする
             setTimeout(triggerAIMove, 500);
         }
     }
     
     function triggerAIMove() {
-        console.log("AI is thinking...");
+        console.log("AIが思考中です...");
         const aiMove = AILogic.makeMove(game.board, game.currentPlayer, game.aiDifficulty);
 
         if(aiMove) {
             const [row, col] = aiMove;
             GameLogic.placeAndFlip(game.board, row, col, game.currentPlayer);
         } else {
-            console.log("AI has no moves.");
+            console.log("AIには打つ手がありません。");
         }
         
-        // After AI makes a move, re-render with the valid moves for the *next* player
+        // AIが手を打った後、次のプレイヤーの有効な手で再描画する
         handleTurn();
     }
 
@@ -72,14 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
             game.isGameOver = true;
             const winner = GameLogic.getWinner(game.board);
             UI.displayWinner(winner);
-            console.log("Game Over.");
+            console.log("ゲームオーバー。");
             return true;
         }
         return false;
     }
 
     function initGame(event) {
-        if(event) event.preventDefault(); // Prevent form submission
+        if(event) event.preventDefault(); // フォームの送信を抑制
 
         game.mode = document.getElementById('game-mode').value;
         game.aiDifficulty = document.getElementById('ai-difficulty').value;
@@ -92,15 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
         game.isGameOver = false;
 
         const validMoves = GameLogic.getValidMoves(game.board, game.currentPlayer);
-        UI.renderBoard(game.board, validMoves); // Pass valid moves on initial render
+        UI.renderBoard(game.board, validMoves); // 初回描画時に有効な手を渡す
         UI.updateScore(game.board);
         UI.updateCurrentPlayer(game.currentPlayer);
         document.getElementById('game-result').textContent = '';
         
-        console.log(`New game started. Mode: ${game.mode}, Difficulty: ${game.aiDifficulty}`);
+        console.log(`新しいゲームを開始しました。モード: ${game.mode}, 難易度: ${game.aiDifficulty}`);
     }
 
-    // --- Event Listeners ---
+    // --- イベントリスナー ---
     document.getElementById('game-setup').addEventListener('submit', initGame);
     document.getElementById('game-mode').addEventListener('change', () => {
         const isPVA = document.getElementById('game-mode').value === 'pva';
@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Initial Game Start ---
+    // --- ゲームの初期化 ---
     initGame();
 });
 
-console.log("app.js loaded");
+console.log("app.jsが読み込まれました");
